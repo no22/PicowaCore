@@ -1,0 +1,22 @@
+{
+	"production":{
+		"server":"",
+		"admin_email":"",
+		"session_name":"picowa_session",
+		"cookie_lifetime":0,
+		"use_debug_mail":0,
+		"use_debug_log":1,
+		"use_error_handler":1,
+		"builder":"Pw_Component_Builder"
+	},
+	"development":{
+		"server":"127.0.0.1",
+		"admin_email":"",
+		"session_name":"picowa_session",
+		"cookie_lifetime":0,
+		"use_debug_mail":0,
+		"use_debug_log":1,
+		"use_error_handler":1,
+		"builder":"Pw_Component_Builder"
+	}
+}

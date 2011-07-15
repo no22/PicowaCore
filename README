@@ -1,0 +1,147 @@
+PicowaCore
+Copyright (c) 2010, 2011 Hiroyuki OHARA 
+
+Document (Japanese)
+http://gikoforth.s13.xrea.com/n2/wiki/Picowa
+
+PicowaCore is a Sinatra-like tiny web application framework for PHP 5.2 that was 
+derived from Fitzgerald framework and anatoo's Curry, Quotation library and 
+inspired by Blanka framework.
+
+Fitzgerald framework:
+ http://github.com/jim/fitzgerald
+
+Blanka framework:
+ http://github.com/anatoo/Blanka
+
+anatoo's Curry and Quotation library:
+ http://d.hatena.ne.jp/anatoo/20090402/1238603946
+
+Example 1 : minimum applicaton
+
+	$app = new Picowa;
+	
+	$app->get('/','hello');
+		function hello() {
+			return 'Hello world!';
+		}
+	
+	$app->run();
+
+
+Exapmle 2 : more object oriented
+
+	class Application extends Picowa {
+		public function hello() {
+			return 'Hello world!';
+		}
+	}
+
+	$app = new Application;
+	$app->get('/', $app->_hello());
+	$app->run();
+
+
+Exapmle 3 : argument passing
+
+	$app = new Picowa;
+	
+	$app->get('/:page', bind('get_page',$app), array('page'=>'about|contact|faq'));
+		function get_page($app, $page) {
+			return $app->render($page);
+		}
+	
+	$app->run();
+
+
+Exapmle 4 : before filter
+
+	class Application extends Picowa {
+		public function hello($name) {
+			return "Hello {$name}!";
+		}
+		
+		public function debuglog($args) {
+			var_dump($args);
+		}
+	}
+	
+	$app = new Application;
+	$app->get('/:name', $app->_hello(), array('name'=>'Jon|Ponch'));
+	$app->before('get','/:name', $app->_debuglog());
+	
+	$app->run();
+
+
+Exapmle 5 : after filter
+
+	$app = new Picowa;
+	
+	$app->get('/','hello');
+	$app->get('/ja/','hello');
+		function hello() {
+			return 'Hello world!';
+		}
+	
+	$app->after('get','/ja/','translate');
+		function translate($text) {
+			return strtr($text, array('Hello'=>'こんにちは','world'=>'世界'));
+		}
+	
+	$app->run();
+
+
+Exapmle 6 : before/around/after filter and execution order
+
+	$app = new Picowa;
+	
+	$app->get('/','hello');
+		function hello() {
+			echo __FUNCTION__.',';
+			return "Hello world!";
+		}
+	
+	$app->before('GET','.*','before_1');
+		function before_1($args) {
+			echo __FUNCTION__.',';
+		}
+
+	$app->before('GET','.*','before_2');
+		function before_2($args) {
+			echo __FUNCTION__.',';
+		}
+
+	$app->after('GET','.*','after_1');
+		function after_1($text) {
+			echo __FUNCTION__.',';
+			return $text;
+		}
+
+	$app->after('GET','.*','after_2');
+		function after_2($text) {
+			echo __FUNCTION__.',';
+			return $text;
+		}
+
+	$app->around('GET','.*','around_1');
+		function around_1($fn,$args) {
+			echo __FUNCTION__.':start,';
+			$text = apply($fn,$args);
+			echo __FUNCTION__.':end,';
+			return $text;
+		}
+
+	$app->around('GET','.*','around_2');
+		function around_2($fn,$args) {
+			echo __FUNCTION__.':start,';
+			$text = apply($fn,$args);
+			echo __FUNCTION__.':end,';
+			return $text;
+		}
+	
+	// before_1,before_2,around_1:start,around_2:start,
+	// hello,
+	// around_2:end,around_1:end,after_1,after_2,
+	
+	$app->run();
+

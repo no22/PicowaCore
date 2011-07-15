@@ -1,0 +1,15 @@
+relre:\.svn/.*
+relre:__Backup/.*
+relre:nbproject/.*
+relre:\.settings/.*
+glob:Thumbs.db
+glob:*.bak
+glob:*~
+glob:.DS_Store
+glob:*.cache
+glob:*.acache
+glob:*.ocache
+glob:sess_*
+glob:.project
+glob:.htaccess
+

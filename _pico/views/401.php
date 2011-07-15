@@ -1,0 +1,1 @@
+<p class="error">Sorry, authorization required.</p>
